@@ -17,22 +17,40 @@ use crate::error::Error;
 /// ```
 /// # use rippl::process_remote_image;
 /// # use url::Url;
-/// let url = process_remote_image("https://www.rust-lang.org/logos/rust-logo-512x512.png", |img| {)
+/// # tokio_test::block_on(async {
+/// let input_url =
+/// Url::parse("https://www.rust-lang.org/logos/rust-logo-128x128.png").unwrap();
+/// let output_url = process_remote_image(&input_url, |img| {
+///     let img = img.clone();
+///     img.resize(100, 100, image::imageops::FilterType::Nearest);
+///     Some(img)
+/// })
+/// .await.unwrap();
+///
+/// assert!(output_url.to_string().contains("i.imgur.com"));
+/// # })
+/// ```
 pub async fn process_remote_image(
     url: &url::Url,
     pipeline: fn(DynamicImage) -> Option<DynamicImage>,
 ) -> Result<url::Url, Error> {
     // Fetch the remote image to a file
     let data = reqwest::get(url.to_string()).await?.bytes().await?;
+    // println!("{:?}", data);
 
     // Load the image as something we can manipulate
-    let img = ImageReader::new(Cursor::new(data)).decode()?;
+    let img = ImageReader::new(Cursor::new(data)).with_guessed_format()?.decode()?;
 
     // Operate on the image
     if let Some(img) = pipeline(img) {
+
+        // Save to a bytestream
+        let mut out_bytes: Vec<u8> = Vec::new();
+        img.write_to(&mut out_bytes, image::ImageOutputFormat::Png)?;
+
         // Upload the image to imgur
         let imgur_handle = imgur::Handle::new("332741bbdcde865".to_string());
-        let info = imgur_handle.upload(img.as_bytes())?;
+        let info = imgur_handle.upload(&out_bytes)?;
 
         // Handle the response
         if let Some(url) = info.link() {
@@ -42,31 +60,5 @@ pub async fn process_remote_image(
         }
     } else {
         return Err(Error::PipelineErr);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use url::Url;
-
-    #[test]
-    fn test_process_remote_image() {
-        tokio_test::block_on(async {
-            let input_url =
-                Url::parse("https://www.rust-lang.org/logos/rust-logo-512x512.png").unwrap();
-            let output_url = process_remote_image(&input_url, |img| {
-                let img = img.clone();
-                img.resize(100, 100, image::imageops::FilterType::Nearest);
-                Some(img)
-            })
-            .await;
-
-            // assert!(output_url.is_ok());
-
-            let output_url = output_url.unwrap();
-            assert!(output_url.to_string().contains("i.imgur.com"));
-            println!("{:?}", output_url);
-        })
     }
 }

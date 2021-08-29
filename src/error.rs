@@ -9,6 +9,9 @@ pub enum Error {
     ImageErr(#[from] image::ImageError),
 
     #[error(transparent)]
+    IoErr(#[from] std::io::Error),
+
+    #[error(transparent)]
     ImgurErr(#[from] imgur::UploadError),
 
     #[error(transparent)]
