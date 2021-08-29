@@ -3,7 +3,6 @@
 [![Docs.rs](https://docs.rs/rippl/badge.svg)](https://docs.rs/rippl) 
 [![Build](https://github.com/Ewpratten/rippl/actions/workflows/build.yml/badge.svg)](https://github.com/Ewpratten/rippl/actions/workflows/build.yml)
 [![Clippy](https://github.com/Ewpratten/rippl/actions/workflows/clippy.yml/badge.svg)](https://github.com/Ewpratten/rippl/actions/workflows/clippy.yml)
-[![Audit](https://github.com/Ewpratten/rippl/actions/workflows/audit.yml/badge.svg)](https://github.com/Ewpratten/rippl/actions/workflows/audit.yml)
 
 
 `rippl` is a library designed for one task:
