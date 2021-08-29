@@ -12,7 +12,7 @@ pub enum Error {
     IoErr(#[from] std::io::Error),
 
     #[error(transparent)]
-    ImgurErr(#[from] imgur::UploadError),
+    ImgurErr(#[from] imgur2018::Error),
 
     #[error(transparent)]
     UrlErr(#[from] url::ParseError),

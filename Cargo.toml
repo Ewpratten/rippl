@@ -1,6 +1,6 @@
 [package]
 name = "rippl"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Evan Pratten <ewpratten@gmail.com>"]
 edition = "2018"
 description = "Remote Image Processing Pipeline Library"
@@ -17,7 +17,7 @@ categories = []
 [dependencies]
 reqwest = "0.11"
 image = "0.23"
-imgur = "0.7"
+imgur2018 = "0.1"
 thiserror = "1.0"
 url = "2.2"
 

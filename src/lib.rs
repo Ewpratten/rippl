@@ -49,15 +49,7 @@ pub async fn process_remote_image(
         img.write_to(&mut out_bytes, image::ImageOutputFormat::Png)?;
 
         // Upload the image to imgur
-        let imgur_handle = imgur::Handle::new("332741bbdcde865".to_string());
-        let info = imgur_handle.upload(&out_bytes)?;
-
-        // Handle the response
-        if let Some(url) = info.link() {
-            return Ok(url::Url::parse(url)?);
-        } else {
-            return Err(Error::NoUrlErr);
-        }
+        return Ok(imgur2018::imgur_upload("332741bbdcde865", out_bytes).await?);
     } else {
         return Err(Error::PipelineErr);
     }
